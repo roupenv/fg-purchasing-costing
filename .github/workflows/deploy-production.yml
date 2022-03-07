@@ -1,0 +1,56 @@
+name: deploy-production
+on:
+  # Trigger the workflow on push request,
+  # but only for the master branch
+  push:
+    branches:
+      - master
+jobs:
+  docker-compose-prod: 
+    runs-on: [self-hosted, linux, X64]
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: master
+          
+      - name: Build Docker Image and Push to DockerHub
+        run: |
+          cd /root/actions-runner/_work/${{ github.event.repository.name }}/${{ github.event.repository.name }}
+          # docker image prune -af
+          docker-compose -f docker-compose.prodbuild.yml build
+          docker-compose -f docker-compose.prodbuild.yml push
+      - name: Copy to Remote Server
+        run: |
+          cd /root/actions-runner/_work/${{ github.event.repository.name }}
+          rsync ${{ github.event.repository.name }}/docker-compose.prod.yml  -e 'ssh -p ${{ secrets.PORT }}' ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/volume1/docker/${{ github.event.repository.name }}/docker-compose.prod.yml
+
+      - name: execute docker-compose over remote ssh using password
+        uses: appleboy/ssh-action@v0.1.4
+        env:
+          DATABASE_URL: ${{secrets.DATABASE_URL }}
+          DATABASE_URL_DEMO: ${{secrets.DATABASE_URL_DEMO}}
+          EXCHANGE_RATE_API_KEY: ${{secrets.EXCHANGE_RATE_API_KEY }}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB }}
+          JWTSECRET: ${{secrets.JWTSECRET }}
+        with: 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          envs: DATABASE_URL, DATABASE_URL_DEMO, EXCHANGE_RATE_API_KEY,POSTGRES_USER,POSTGRES_PASSWORD,POSTGRES_DB, JWTSECRET
+          port: ${{ secrets.PORT }}
+          script: |
+            export PATH=/usr/local/bin:$PATH
+            export DATABASE_URL=$DATABASE_URL
+            export DATABASE_URL_DEMO=$DATABASE_URL_DEMO
+            export EXCHANGE_RATE_API_KEY=$EXCHANGE_RATE_API_KEY
+            export POSTGRES_USER=$POSTGRES_USER
+            export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+            export POSTGRES_DB=$POSTGRES_DB           
+            export JWTSECRET=$JWTSECRET           
+            cd /volume1/docker/${{ github.event.repository.name }}
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d
+

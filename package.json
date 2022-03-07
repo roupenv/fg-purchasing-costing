@@ -1,0 +1,27 @@
+{
+  "name": "finished-goods-purchasing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start all": "concurrently \"npm --prefix ./frontend start\" \"npm --prefix ./backend start\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roupenv/finished-goods-purchasing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roupenv/finished-goods-purchasing/issues"
+  },
+  "homepage": "https://github.com/roupenv/finished-goods-purchasing#readme",
+  "dependencies": {
+    "concurrently": "^6.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}

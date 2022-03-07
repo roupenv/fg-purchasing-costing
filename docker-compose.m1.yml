@@ -1,0 +1,40 @@
+version: "3.9" # optional since v1.27.0
+services:
+    frontend:
+        build:
+            context: ./frontend
+            target: dev
+        ports:
+            - "3000:3000"
+        environment:
+            - HOST=0.0.0.0
+        volumes:
+            - ./frontend:/app
+        depends_on:
+            - backend
+        restart: unless-stopped
+    backend:
+        build:
+            context: ./backend
+            target: dev
+        ports:
+            - "3005:3005"
+            - "5555:5555" #Prisma Studio attach shell to backend container & "npx prisma studio"
+        volumes:
+            - ./backend:/app
+            -  /app/node_modules # Create anonymous volume for backend Node Modules for Bcyrpt on M1 Mac 
+        restart: unless-stopped
+        depends_on:
+            - db
+    db:
+        image: postgres
+        restart: always
+        env_file: ./db/postgres.env
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        ports:
+            - "5455:5432"
+        # command: ["postgres", "-c", "log_statement=all"]  # Uncomment to log all postgres queries
+
+volumes:
+    postgres-data:

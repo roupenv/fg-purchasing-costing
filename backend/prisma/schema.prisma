@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model color {
+  id            Int             @id @default(autoincrement())
+  color_code    String          @unique @db.VarChar(4)
+  color_name    String?         @db.VarChar(64)
+  material      String?         @db.VarChar(64)
+  product_color product_color[]
+}
+
+model duty_line_items {
+  id                        Int      @id @default(autoincrement())
+  shipment_fk               Int
+  tarrif_fk                 Int
+  units_entered             Int?
+  value_entered             Decimal? @db.Money
+  duty_percentage           Float?   @db.Real
+  processing_fee_percentage Float?   @db.Real
+  line_total                Decimal? @db.Money
+  shipment                  shipment @relation(fields: [shipment_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tarrif                    tarrif   @relation(fields: [tarrif_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model invoice {
+  id                 Int                  @id @default(autoincrement())
+  invoice_number     String               @db.VarChar(24)
+  date               DateTime             @db.Timestamptz(6)
+  vendor_fk          Int?
+  vendor             vendor?              @relation(fields: [vendor_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  invoice_line_items invoice_line_items[]
+  payment_invoice    payment_invoice[]
+  shipment_invoice   shipment_invoice[]
+
+  @@unique([invoice_number, date], name: "invoice_invoice_number_date_key")
+}
+
+model invoice_line_items {
+  id                  Int      @id @default(autoincrement())
+  invoice_fk          Int
+  po_ref              String?  @db.VarChar(32)
+  product_fk          Int
+  color               String?  @db.VarChar(64)
+  quantity            Int?
+  price               Decimal? @db.Money
+  discount            Decimal? @db.Money
+  line_total          Decimal? @db.Money
+  sample              Boolean?
+  line_total_discount Decimal? @db.Money
+  invoice             invoice  @relation(fields: [invoice_fk], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product             product  @relation(fields: [product_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model payment {
+  id                Int                 @id @default(autoincrement())
+  payment_vendor_fk Int?
+  reference_number  String              @db.VarChar(64)
+  date_booked       DateTime            @db.Timestamptz(6)
+  payment_exch_rate Float?              @db.Real
+  vendor            vendor?             @relation(fields: [payment_vendor_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payment_line_item payment_line_item[]
+
+  @@unique([reference_number, date_booked], name: "payment_reference_number_date_booked_key")
+}
+
+model payment_invoice {
+  payment_line_item_id Int?
+  invoice_id           Int?
+  id                   Int                @id @default(autoincrement())
+  invoice              invoice?           @relation(fields: [invoice_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  payment_line_item    payment_line_item? @relation(fields: [payment_line_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model payment_line_item {
+  id              Int               @id @default(autoincrement())
+  vendor_fk       Int
+  usd_cost        Decimal?          @db.Money
+  euro_payment    Decimal?          @db.Money
+  tracking_number String?           @db.VarChar(64)
+  description     String?           @db.VarChar
+  payment_fk      Int
+  payment         payment           @relation(fields: [payment_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vendor          vendor            @relation(fields: [vendor_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payment_invoice payment_invoice[]
+}
+
+model product {
+  id                 Int                  @id @default(autoincrement())
+  product_name       String               @unique @db.VarChar(64)
+  bottom             String?              @db.VarChar(24)
+  tarrif_fk          Int?
+  season             String?              @db.VarChar(4)
+  collection         String?              @db.VarChar(12)
+  tarrif             tarrif?              @relation(fields: [tarrif_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  invoice_line_items invoice_line_items[]
+  product_color      product_color[]
+}
+
+model product_color {
+  products_id Int?
+  colors_id   Int?
+  id          Int      @id @default(autoincrement())
+  color       color?   @relation(fields: [colors_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product     product? @relation(fields: [products_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model shipment {
+  id                     Int                @id @default(autoincrement())
+  shipment_ref           String             @db.VarChar(24)
+  shipping_vendor_fk     Int?
+  departure_date         DateTime?          @db.Timestamptz(6)
+  arrival_date           DateTime?          @db.Timestamptz(6)
+  trans_method           String?            @db.VarChar(12)
+  weight                 Int?
+  weight_unit            String?            @db.VarChar(4)
+  volume                 Float?             @db.Real
+  volume_unit            String?            @db.VarChar(8)
+  chargeable_weight      Int?
+  chargeable_weight_unit String?            @db.VarChar(4)
+  packs                  Int?
+  packs_type             String?            @db.VarChar(8)
+  units_shipped          Int?
+  shipping_costs         Decimal?           @db.Money
+  duty_costs             Decimal?           @db.Money
+  insurance_costs        Decimal?           @db.Money
+  euro_value             Decimal?           @db.Money
+  us_value               Decimal?           @db.Money
+  vendor                 vendor?            @relation(fields: [shipping_vendor_fk], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  duty_line_items        duty_line_items[]
+  shipment_invoice       shipment_invoice[]
+}
+
+model shipment_invoice {
+  shipment_id Int?
+  invoice_id  Int?
+  id          Int       @id @default(autoincrement())
+  invoice     invoice?  @relation(fields: [invoice_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  shipment    shipment? @relation(fields: [shipment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model tarrif {
+  id              Int               @id @default(autoincrement())
+  tarrif_code     String            @unique @db.VarChar(24)
+  description     String?           @db.VarChar
+  material        String?           @db.VarChar(64)
+  duty_line_items duty_line_items[]
+  product         product[]
+}
+
+model vendor {
+  id                Int                 @id @default(autoincrement())
+  name              String              @unique @db.VarChar(128)
+  type              String?             @db.VarChar(64)
+  invoice           invoice[]
+  payment           payment[]
+  payment_line_item payment_line_item[]
+  shipment          shipment[]
+}
+
+model user {
+  id        Int    @id @default(autoincrement())
+  email     String @unique
+  password  String @db.VarChar(64)
+  firstName String @db.VarChar(64)
+  lastName  String @db.VarChar(64)
+  role      Role   @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
+}

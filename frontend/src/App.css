@@ -1,0 +1,9 @@
+/* CSS Styles For Printing */
+@media print {
+  .Sidebar {
+    display: none;
+  }
+  main {
+    margin: 0;
+  }
+}

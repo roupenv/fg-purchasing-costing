@@ -1,0 +1,47 @@
+.ContextBarAggregator {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #c36f00;
+  width: 95%;
+  max-width: 1000px;
+  margin: 8px 0;
+  border-radius: 4px;
+  height: auto;
+}
+
+.ContextBarAggregator div{
+    display: flex;
+    padding: 10px;
+    align-items: baseline;
+  }
+
+
+.ContextBarAggregator .param-group{
+    display: flex;
+  }
+  
+.ContextBarAggregator .param-group label{
+    margin-right: 5px;
+  }
+
+.ContextBarAggregator input{
+  height: 20px;
+  width: 140px;
+  margin: 0 1px;
+  -webkit-appearance: none;
+  border: 1px solid black;
+  padding: px;
+  background-color: white;
+  border-radius: 2px;
+}
+
+
+.ContextBarAggregator button:hover{
+  background-color: rgb(202, 202, 202);
+}
+
+.ContextBarAggregator h4{
+  margin: 0 10px;
+}

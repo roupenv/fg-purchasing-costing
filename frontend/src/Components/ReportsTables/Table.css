@@ -1,0 +1,35 @@
+/* .table-container{
+  width: 100%;
+  max-width: 1000px;
+}
+
+.dynamic-table .first-group {
+    background-color: #E2F0D9;
+  }
+
+.dynamic-table .first-group td{
+    border-bottom: 4px double black;
+  }
+
+
+.dynamic-table .second-group :nth-child(even){
+    background-color: #FCE4D6;
+  }
+
+.dynamic-table .second-group td{
+    border-bottom: 4px double black;
+  }
+
+.dynamic-table tr.detail:nth-child(even) {
+background-color: #dfdfdf;
+}
+
+/* Format Columns */
+/* .dynamic-table tr.detail :nth-child(even) {
+    background-color: #eeeeee;
+  } */
+
+
+/* .dynamic-table tfoot{
+    border-top: 4px double black;
+} */ 

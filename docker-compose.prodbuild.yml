@@ -1,0 +1,21 @@
+version: "3.9" # optional since v1.27.0
+services:       
+    app:
+        build:
+            context: ./
+            dockerfile: Dockerfile.prod
+            target: production
+            args: 
+                REACT_APP_MODE: 'standard'
+        image: roupenv/roupenv:finished-goods-purchasing-app
+
+
+
+    app-demo:
+        build:
+            context: ./
+            dockerfile: Dockerfile.prod
+            target: production
+            args: 
+                REACT_APP_MODE: 'demo'
+        image: roupenv/roupenv:finished-goods-purchasing-app-demo

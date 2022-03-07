@@ -1,0 +1,77 @@
+# pull the official base image
+FROM node:lts-alpine AS node
+
+
+#**************** Frontend ********************
+
+FROM node as frontend_prod_base
+# set working direction 
+WORKDIR /frontend
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /frontend/node_modules/.bin:$PATH
+# install application dependencies
+COPY ./frontend/package.json ./
+COPY ./frontend/package-lock.json ./
+RUN npm ci
+
+
+FROM node as frontend_builder
+# set working direction 
+WORKDIR /frontend
+
+COPY --from=frontend_prod_base /frontend/ ./
+
+# Add app
+COPY ./frontend ./
+ARG REACT_APP_MODE=standard
+RUN REACT_APP_MODE=$REACT_APP_MODE npm run build
+
+
+
+#**************** Backend ********************
+# pull the official base image
+
+# Dev Stage
+FROM node as backend_builder
+
+# set working direction
+WORKDIR /app
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+# install application dependencies
+COPY ./backend/package.json ./
+COPY ./backend/package-lock.json ./
+
+RUN npm ci
+
+COPY ./backend/prisma/ ./prisma
+RUN npx prisma generate
+
+# Add app
+COPY ./backend ./
+
+RUN ["npm", "run", "build"]
+
+
+
+FROM node as production
+
+# set working direction
+WORKDIR /app
+
+COPY --from=backend_builder /app/package.json ./
+COPY --from=backend_builder /app/package-lock.json ./
+RUN npm i --only=production
+
+
+
+COPY --from=backend_builder /app/build ./build
+COPY --from=backend_builder /app/prisma ./prisma
+
+COPY --from=frontend_builder /frontend/build /frontend/build
+
+
+CMD ["npm", "run", "start:prod"]
+
+
+
