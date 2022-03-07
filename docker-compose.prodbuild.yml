@@ -7,7 +7,7 @@ services:
             target: production
             args: 
                 REACT_APP_MODE: 'standard'
-        image: roupenv/roupenv:finished-goods-purchasing-app
+        image: roupenv/roupenv:fg-purchasing-costing-app
 
 
 
@@ -18,4 +18,4 @@ services:
             target: production
             args: 
                 REACT_APP_MODE: 'demo'
-        image: roupenv/roupenv:finished-goods-purchasing-app-demo
+        image: roupenv/roupenv:fg-purchasing-costing-app-demo

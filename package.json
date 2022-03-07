@@ -1,5 +1,5 @@
 {
-  "name": "finished-goods-purchasing",
+  "name": "fg-purchasing-costing",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/roupenv/finished-goods-purchasing.git"
+    "url": "git+https://github.com/roupenv/fg-purchasing-costing.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/roupenv/finished-goods-purchasing/issues"
+    "url": "https://github.com/roupenv/fg-purchasing-costing/issues"
   },
-  "homepage": "https://github.com/roupenv/finished-goods-purchasing#readme",
+  "homepage": "https://github.com/roupenv/fg-purchasing-costing#readme",
   "dependencies": {
     "concurrently": "^6.2.1"
   },

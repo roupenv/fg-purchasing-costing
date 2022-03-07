@@ -1,7 +1,7 @@
 version: "3.9" # optional since v1.27.0
 services:
     app:
-        image: roupenv/roupenv:finished-goods-purchasing-app
+        image: roupenv/roupenv:fg-purchasing-costing-app
         environment:
             NODE_ENV: production
             DATABASE_URL: ${DATABASE_URL}
@@ -24,7 +24,7 @@ services:
         ports:
             - "5455:5432"
     app-demo:
-        image: roupenv/roupenv:finished-goods-purchasing-app-demo
+        image: roupenv/roupenv:fg-purchasing-costing-app-demo
         environment:
             NODE_ENV: production
             DATABASE_URL: ${DATABASE_URL_DEMO}
