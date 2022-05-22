@@ -1,8 +1,8 @@
 
 # FG-Purchasing-Costing
 An internal full-stack application to record, consolidate, and evaluate costs related to purchasing finished goods.
-
-Demo App Instance available upon request
+Please note that this repo is a copy of the private repo used in production, and thus this public repo has limited git history.
+Link to the Demo App and private repo is available upon request
 
 ## Motivation
 The motivation for this project was to take an internal Microsoft Access project I created and learn how to write and build a full-stack application that would be of practical use for the company and management. This app is to be used in conjunction with company's ERP software vendor and augment it's capabilities.
