@@ -1,7 +1,9 @@
 
 # FG-Purchasing-Costing
 An internal full-stack application to record, consolidate, and evaluate costs related to purchasing finished goods.
+
 Please note that this repo is a copy of the private repo used in production, and thus this public repo has limited git history.
+
 Link to the Demo App and private repo is available upon request
 
 ## Motivation
